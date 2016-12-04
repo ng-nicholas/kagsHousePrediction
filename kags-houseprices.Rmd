@@ -3,10 +3,16 @@ title: "kags-houseprices"
 output: html_notebook
 ---
 
-# Loading required packages and reading in data
+# Loading required packages
 ```{r}
-library(data.table)
+library(ggplot2)
+library(dplyr)
+library(caret)
+```
 
+
+# Reading in data
+```{r}
 data_raw <- read.csv("./Data/train.csv")
 ```
 
@@ -15,29 +21,25 @@ data_raw <- read.csv("./Data/train.csv")
 summary(data_raw)
 ```
 
-# Loading caret package and removing NZV variables
+# Removing NZV variables
 ```{r}
-library(caret)
-
-data_raw<-data_raw[,-c(1,nearZeroVar(data_raw))]
+data_raw <- data_raw[, -c(1, nearZeroVar(data_raw))]
 ```
 
 # Remove other unnecessary variables
 ```{r}
-data_raw<-data_raw[,!names(data_raw) %in% c("PoolQC")]
+data_raw <- data_raw[, !names(data_raw) %in% c("PoolQC")]
 ```
 
 # Looking at neighbourhoods
 ```{r}
-library(ggplot2)
-library(dplyr)
-ggplot(data_raw,aes(Neighborhood,LotArea))+geom_boxplot()+scale_y_log10()+coord_flip()
-ggplot(data_raw,aes(Neighborhood,SalePrice))+geom_boxplot()+scale_y_log10()+coord_flip()
-ggplot(data_raw,aes(log(LotArea),log(SalePrice),color=Neighborhood))+geom_point()
-with(data_raw,table(Neighborhood,BldgType))
-with(data_raw,table(Neighborhood,HouseStyle))
+ggplot(data_raw, aes(Neighborhood,LotArea)) + geom_boxplot() + scale_y_log10() + coord_flip()
+ggplot(data_raw, aes(Neighborhood, SalePrice)) + geom_boxplot() + scale_y_log10() + coord_flip()
+ggplot(data_raw, aes(log(LotArea), log(SalePrice), color = Neighborhood)) + geom_point()
+with(data_raw, table(Neighborhood, BldgType))
+with(data_raw, table(Neighborhood, HouseStyle))
 
-data_raw %>% group_by(Neighborhood) %>% summarise(meanQual=mean(OverallQual,na.rm=TRUE),meanCond=mean(OverallCond,na.rm=TRUE)) %>% arrange(desc(meanQual))
+data_raw %>% group_by(Neighborhood) %>% summarise(meanQual = mean(OverallQual, na.rm = T), meanCond = mean(OverallCond, na.rm = T)) %>% arrange(desc(meanQual))
 ```
 
 Findings
